@@ -1,12 +1,10 @@
 from django.contrib.auth.models import User
-from django.db import models
+# from django.db import models
+from django.contrib.gis.db import models
 
 class Location(models.Model):  # Een erf OID 
-    # boundary TODO
-    # postcode
-    # huisnummer    
-    pass
-    
+    boundary = models.PolygonField(default="POLYGON(( 10 10, 10 20, 20 20, 20 15, 10 10))")
+
     
 class MissionType(models.Model):
     title = models.CharField(max_length=255)

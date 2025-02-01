@@ -4,6 +4,8 @@ FROM python:latest
 # Set the working directory in the container
 WORKDIR /app
 
+RUN apt-get update && apt-get install gdal-bin libgdal-dev
+
 # Copy the current directory contents into the container at /app
 COPY . /app
 

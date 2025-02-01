@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.gis',
     'rest_framework',
     'api',  # Our app
 ]
@@ -85,10 +86,13 @@ WSGI_APPLICATION = 'rewild.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
+        'ENGINE': 'django.contrib.gis.db.backends.spatialite',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+# Add the following to ensure SpatiaLite is loaded
+SPATIALITE_LIBRARY_PATH = 'mod_spatialite'
 
 
 # Password validation
