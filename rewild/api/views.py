@@ -21,14 +21,14 @@ class MissionInstanceViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=True, methods=['post'])
-    def upload_picture(self, request, *args, **kwargs):
+    def complete_mission(self, request, *args, **kwargs):
         mission_instance = self.get_object()
         serializer = self.get_serializer(mission_instance, data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
             return Response({"message": "Image uploaded and DoneMission created"}, status=status.HTTP_201_CREATED)
-
+        mission_instance.delete()
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserProfileViewSet(viewsets.ModelViewSet):

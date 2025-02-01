@@ -20,9 +20,7 @@ class MissionType(models.Model):
 class DoneMission(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
     mission_type = models.ForeignKey(MissionType, on_delete=models.CASCADE)
-    # gps_coordinates = #TODO
-    latitude = models.FloatField()
-    longitude = models.FloatField()
+    gps_coordinates = models.PointField()
     completion_date = models.DateTimeField()
     image = models.ImageField()
 
