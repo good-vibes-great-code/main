@@ -1,3 +1,0 @@
-[submodule "frontend"]
-	path = frontend
-	url = git@github.com:good-vibes-great-code/frontend.git
