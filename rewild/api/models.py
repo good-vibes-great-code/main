@@ -17,11 +17,14 @@ class MissionType(models.Model):
     def __str__(self):
         return self.title
 
-class DoneIntervention(models.Model):
+class DoneMission(models.Model):
     location = models.ForeignKey(Location, on_delete=models.CASCADE)
     mission_type = models.ForeignKey(MissionType, on_delete=models.CASCADE)
     # gps_coordinates = #TODO
+    latitude = models.FloatField()
+    longitude = models.FloatField()
     completion_date = models.DateTimeField()
+    image = models.ImageField()
 
 class MissionInstance(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -30,7 +33,6 @@ class MissionInstance(models.Model):
     expires_at = models.DateTimeField(null=True, blank=True)
     accepted = models.BooleanField(default=False)
     declined = models.BooleanField(default=False)
-    completed_at = models.DateTimeField()
     points = models.IntegerField(default=10)
 
     def __str__(self):

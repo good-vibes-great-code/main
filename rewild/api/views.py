@@ -2,8 +2,9 @@ import requests
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import MissionType, MissionInstance, UserProfile, WildlifeSighting, ShopItem, UserPurchase, Location
-from .serializers import (MissionTypeSerializer,MissionInstanceSerializer, UserProfileSerializer, 
+from rest_framework import status
+from .models import MissionType, MissionInstance, UserProfile, WildlifeSighting, ShopItem, UserPurchase, Location, DoneMission
+from .serializers import (MissionTypeSerializer,MissionInstanceSerializer, UserProfileSerializer,
                           WildlifeSightingSerializer, ShopItemSerializer, UserPurchaseSerializer, LocationSerializer)
 
 RECOMMENDATION_API_URL = "https://external-api.com/recommendations"
@@ -18,6 +19,17 @@ class MissionInstanceViewSet(viewsets.ModelViewSet):
     queryset = MissionInstance.objects.all()
     serializer_class = MissionInstanceSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+    @action(detail=True, methods=['post'])
+    def upload_picture(self, request, *args, **kwargs):
+        mission_instance = self.get_object()
+        serializer = self.get_serializer(mission_instance, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Image uploaded and DoneMission created"}, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
