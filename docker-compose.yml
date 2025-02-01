@@ -7,7 +7,7 @@ services:
     tty: true
     command: bash
   backend:
-    build: .
+    build: rewild/
     volumes:
-      - ./rewild:/app/
+      - ./rewild:/app/    
     network_mode: host
