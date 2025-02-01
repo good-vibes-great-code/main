@@ -30,7 +30,7 @@ class MissionInstance(models.Model):
     expires_at = models.DateTimeField(null=True, blank=True)
     accepted = models.BooleanField(default=False)
     declined = models.BooleanField(default=False)
-    completed_at = models.DateTimeField()
+    completed_at = models.DateTimeField(null=True, blank=True)
     points = models.IntegerField(default=10)
 
     def __str__(self):
