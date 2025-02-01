@@ -16,17 +16,17 @@ logger = logging.getLogger(__name__)
 class MissionTypeViewSet(viewsets.ModelViewSet):
     queryset = MissionType.objects.all()
     serializer_class = MissionTypeSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
 class MissionInstanceViewSet(viewsets.ModelViewSet):
     queryset = MissionInstance.objects.all()
     serializer_class = MissionInstanceSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
 class DoneMissionViewSet(viewsets.ModelViewSet):
     queryset = DoneMission.objects.all()
     serializer_class = DoneMissionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     
     def create(self, request, *args, **kwargs):
         logger.warning(f"Request data: {request.data}")
@@ -47,28 +47,28 @@ class DoneMissionViewSet(viewsets.ModelViewSet):
 class UserProfileViewSet(viewsets.ModelViewSet):
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
 class WildlifeSightingViewSet(viewsets.ModelViewSet):
     queryset = WildlifeSighting.objects.all()
     serializer_class = WildlifeSightingSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
 class ShopItemViewSet(viewsets.ModelViewSet):
     queryset = ShopItem.objects.all()
     serializer_class = ShopItemSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
 
 class LocationViewSet(viewsets.ModelViewSet):
     queryset = Location.objects.all()
     serializer_class = LocationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
 class UserPurchaseViewSet(viewsets.ModelViewSet):
     queryset = UserPurchase.objects.all()
     serializer_class = UserPurchaseSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
 
     @action(detail=False, methods=['post'])
     def purchase(self, request):
