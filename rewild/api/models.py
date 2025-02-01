@@ -59,5 +59,5 @@ class WildlifeSighting(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     species_name = models.CharField(max_length=255)
     image = models.ImageField(upload_to='wildlife_sightings/')
-    location = models.CharField(max_length=255, blank=True, null=True)
+    spot_location = models.PointField(null=True, blank=True, spatial_index=False)
     reported_at = models.DateTimeField(auto_now_add=True)
