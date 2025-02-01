@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . /app
 
 # Install the dependencies from requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 # Expose the port the app will run on (optional, depending on your app)
 # EXPOSE 5000
