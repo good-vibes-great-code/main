@@ -1,13 +1,14 @@
 import requests
 import logging
+import django_filters.rest_framework
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics
 from .models import MissionType, MissionInstance, UserProfile, WildlifeSighting, ShopItem, UserPurchase, Location, DoneMission
 from .serializers import (MissionTypeSerializer,MissionInstanceSerializer, DoneMissionSerializer, UserProfileSerializer,
                           WildlifeSightingSerializer, ShopItemSerializer, UserPurchaseSerializer, LocationSerializer)
-
+from datetime import datetime
 RECOMMENDATION_API_URL = "https://external-api.com/recommendations"
 
 # Get an instance of a logger
@@ -17,12 +18,37 @@ class MissionTypeViewSet(viewsets.ModelViewSet):
     queryset = MissionType.objects.all()
     serializer_class = MissionTypeSerializer
     permission_classes = [permissions.AllowAny]
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_fields = ['id',]
 
 class MissionInstanceViewSet(viewsets.ModelViewSet):
     queryset = MissionInstance.objects.all()
     serializer_class = MissionInstanceSerializer
     permission_classes = [permissions.AllowAny]
-
+    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filterset_fields = ['mission_type']
+    
+    @action(detail=False, methods=['get'])
+    def active_missions(self, request):
+        user = request.user
+        active_missions = MissionInstance.objects.filter(
+            user=user,
+            expires_at__gte=datetime.now(),
+            completed_at__isnull=True,
+        )
+        serializer = self.get_serializer(active_missions, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'])
+    def completed_missions(self, request):
+        user = request.user
+        completed_mission = MissionInstance.objects.filter(
+            user=user,
+            completed_at__isnull=False,
+        )
+        serializer = self.get_serializer(completed_mission, many=True)
+        return Response(serializer.data)
+    
 class DoneMissionViewSet(viewsets.ModelViewSet):
     queryset = DoneMission.objects.all()
     serializer_class = DoneMissionSerializer
