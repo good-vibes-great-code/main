@@ -1,13 +1,12 @@
 <script>
-    // import { Drawer, Button, CloseButton } from 'flowbite-svelte';
     import { onMount } from "svelte";
-    // import { InfoCircleSolid, ArrowRightOutline } from 'flowbite-svelte-icons'
-    // import { sineIn } from 'svelte/easing';
+    import { InfoCircleSolid, ArrowRightOutline, UserCircleSolid, AdjustmentsVerticalOutline, DownloadSolid} from 'flowbite-svelte-icons'
+    import { sineIn } from 'svelte/easing';
     import { browser } from "$app/environment";
     import mapboxgl from "mapbox-gl";
     import turf from "turf";
     import "mapbox-gl/dist/mapbox-gl.css"
-    import { Accordion, AccordionItem, Drawer, Button, CloseButton } from "flowbite-svelte";
+    import { Accordion, AccordionItem, Drawer, Button, CloseButton , ButtonGroup} from "flowbite-svelte";
     let map;
     let mapContainer;
     let locationCenter = turf.point([4.741815873559253, 51.78959525586813]);
@@ -22,12 +21,12 @@
     let missions = [];
     let missionTypes = {};
     let landBoundery; // geo json
-    // let hide_user_drawer = false;
-    // let transitionParams = {
-    //     x: -320,
-    //     duration: 200,
-    //     easing: sineIn
-    // };
+    let hide_user_drawer = true;
+    let transitionParams = {
+        x: 320,
+        duration: 200,
+        easing: sineIn
+    };
     mapboxgl.accessToken =
         "pk.eyJ1IjoiZnJhbmt2djE5OTciLCJhIjoiY201cWpwbXM1MDBqbzJrc2U3YzViOXZ6MiJ9.bIR8krCe9RfTQ-5gP7Km7A";
 
@@ -87,7 +86,7 @@
     {#await dataPromise}
         <p>Waiting on Data</p>
     {:then data} 
-    <div class="max-w-xs mt-10 p-4 bg-white rounded-lg shadow-md pointer-events-auto">
+    <div class="max-w-sm mt-10 ml-10 p-4 bg-white rounded-lg shadow-md pointer-events-auto">
         <h1 class="text-4xl font-bold text-gray-800 text-center border-b-4 border-blue-500 pb-2">
             Missions
         </h1>
@@ -96,22 +95,32 @@
                 <AccordionItem>
                     <span slot="header">{missionTypes[mission['mission_type']]['title']}</span>
                     <p class="text-gray-500 dark:text-gray-400">
-                        Check out this guide to learn how to <a href="/" target="_blank" rel="noreferrer" class="text-blue-600 dark:text-blue-500 hover:underline"> get started </a>
-                        and start developing websites even faster with components on top of Tailwind CSS.
+                        {missionTypes[mission['mission_type']]['description']}
                     </p>
                 </AccordionItem>
             {/each}
         </Accordion>
     </div>
     {/await}
-    <!-- <button class='absolute top-8 right-8 z-10 size-20 opacity-65' src="./user.png" alt="" on:click={() => (hide_user_drawer = true)}> -->
 </div>
-<!-- <Drawer transitionType="fly" {transitionParams} bind:hidden={hide_user_drawer} class="z-10 aboslute" id="sidebar1">
+<img class='absolute top-8 right-8 z-10 size-20 opacity-65' src="./user.png" alt="poep" on:click={() => (hide_user_drawer = false)}/>
+<Drawer placement="right" transitionType="fly" {transitionParams} bind:hidden={hide_user_drawer} id="sidebar1" width="w-full">
     <div class="flex items-center">
-      <h5 id="drawer-label" class="inline-flex items-center mb-4 text-base font-semibold text-gray-500 dark:text-gray-400">
-        <InfoCircleSolid class="w-5 h-5 me-2.5" />Info
-      </h5>
-      <CloseButton on:click={() => (hidden1 = true)} class="mb-4 dark:text-white" />
+        <ButtonGroup class="*:w-full grid grid-cols-4">
+            <Button>
+              <UserCircleSolid class="w-4 h-4 me-2" />
+              <h1>Profile</h1>
+            </Button>
+            <Button>
+              <AdjustmentsVerticalOutline class="w-4 h-4 me-2" />
+              <h1>Settings</h1>
+            </Button>
+            <Button>
+              <DownloadSolid class="w-4 h-4 me-2" />
+              <h1>Download</h1>
+            </Button>
+          </ButtonGroup>
+      <CloseButton on:click={() => (hide_user_drawer = true)} class="w-50 mb-4 dark:text-white" />
     </div>
     <p class="mb-6 text-sm text-gray-500 dark:text-gray-400">
       Supercharge your hiring by taking advantage of our <a href="/" class="text-primary-600 underline dark:text-primary-500 hover:no-underline"> limited-time sale </a>
@@ -121,4 +130,4 @@
       <Button color="light" href="/">Learn more</Button>
       <Button href="/" class="px-4">Get access <ArrowRightOutline class="w-5 h-5 ms-2" /></Button>
     </div>
-  </Drawer> -->
+  </Drawer>
