@@ -37,10 +37,16 @@ class DoneMissionViewSet(viewsets.ModelViewSet):
         
         serializer = DoneMissionSerializer(data=request.data)
         if serializer.is_valid():
-            done_mission = serializer.save()
-            mission_instance.completed_at = done_mission.completion_date
-            mission_instance.save()
-            return Response({"message": "DoneMission created successfully"}, status=status.HTTP_201_CREATED)
+            if mission_instance.completed_at:
+                return Response({"error": "MissionInstance already completed"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                done_mission = serializer.save()
+                mission_instance.completed_at = done_mission.completion_date
+                mission_instance.save()
+                userprofile = UserProfile.objects.get(id=mission_instance.user_id)
+                userprofile.points += mission_instance.points
+                userprofile.save()
+                return Response({"message": "DoneMission created successfully"}, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
