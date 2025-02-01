@@ -30,6 +30,7 @@ RECOMMENDATION_API_URL = "https://external-api.com/recommendations"
 router = DefaultRouter()
 router.register(r'mission_instances', api.views.MissionInstanceViewSet)
 router.register(r'mission_types', api.views.MissionTypeViewSet)
+router.register(r'complete_mission', api.views.DoneMissionViewSet)
 router.register(r'profiles', api.views.UserProfileViewSet)
 router.register(r'sightings', api.views.WildlifeSightingViewSet)
 router.register(r'shop', api.views.ShopItemViewSet)

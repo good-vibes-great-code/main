@@ -1,14 +1,17 @@
 import requests
+import logging
 from rest_framework import viewsets, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import status
 from .models import MissionType, MissionInstance, UserProfile, WildlifeSighting, ShopItem, UserPurchase, Location, DoneMission
-from .serializers import (MissionTypeSerializer,MissionInstanceSerializer, UserProfileSerializer,
+from .serializers import (MissionTypeSerializer,MissionInstanceSerializer, DoneMissionSerializer, UserProfileSerializer,
                           WildlifeSightingSerializer, ShopItemSerializer, UserPurchaseSerializer, LocationSerializer)
 
 RECOMMENDATION_API_URL = "https://external-api.com/recommendations"
 
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 class MissionTypeViewSet(viewsets.ModelViewSet):
     queryset = MissionType.objects.all()
@@ -20,15 +23,25 @@ class MissionInstanceViewSet(viewsets.ModelViewSet):
     serializer_class = MissionInstanceSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    @action(detail=True, methods=['post'])
-    def complete_mission(self, request, *args, **kwargs):
-        mission_instance = self.get_object()
-        serializer = self.get_serializer(mission_instance, data=request.data, partial=True)
-
+class DoneMissionViewSet(viewsets.ModelViewSet):
+    queryset = DoneMission.objects.all()
+    serializer_class = DoneMissionSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def create(self, request, *args, **kwargs):
+        logger.warning(f"Request data: {request.data}")
+        try:
+            mission_instance = MissionInstance.objects.get(id=request.data.get('mission_instance'))
+        except MissionInstance.DoesNotExist:
+            return Response({"error": "MissionInstance not found"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = DoneMissionSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return Response({"message": "Image uploaded and DoneMission created"}, status=status.HTTP_201_CREATED)
-        mission_instance.delete()
+            done_mission = serializer.save()
+            mission_instance.completed_at = done_mission.completion_date
+            mission_instance.save()
+            return Response({"message": "DoneMission created successfully"}, status=status.HTTP_201_CREATED)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class UserProfileViewSet(viewsets.ModelViewSet):

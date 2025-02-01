@@ -1,6 +1,10 @@
 from rest_framework import serializers
 from datetime import datetime
-from .models import MissionType, MissionInstance, UserProfile, WildlifeSighting, ShopItem, UserPurchase, Location
+from .models import DoneMission, MissionType, MissionInstance, UserProfile, WildlifeSighting, ShopItem, UserPurchase, Location
+from PIL import Image
+from PIL.ExifTags import TAGS, GPSTAGS
+from django.contrib.gis.db import models
+from django.contrib.gis.geos import Point
 
 class MissionTypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,6 +16,11 @@ class MissionInstanceSerializer(serializers.ModelSerializer):
         model = MissionInstance
         fields = '__all__'
 
+class DoneMissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DoneMission
+        fields = '__all__'
+        
     def extract_gps(self, image):
         """Extracts GPS metadata from the uploaded image."""
         try:
@@ -59,19 +68,17 @@ class MissionInstanceSerializer(serializers.ModelSerializer):
         """Creates a DoneMission instance from the uploaded image."""
         image = validated_data.pop('image')
         gps_coords = self.extract_gps(image)
-
         if gps_coords:
+            mission_instance = validated_data.get('mission_instance') 
+            print(mission_instance)
             latitude, longitude = gps_coords
-            DoneMission.objects.create(
-                location = self.fields.user.location,
-                mission_type = self.fields.mission_type,
-                latitude=latitude,
-                longitude=longitude,
+            done_mission = DoneMission.objects.create(
+                mission_instance = mission_instance,
+                gps_coordinates = Point(latitude, longitude),
                 completion_date = datetime.now(),
                 image = image
             )
-
-        return super().create(validated_data)
+        return done_mission
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:

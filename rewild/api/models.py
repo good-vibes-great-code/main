@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 # from django.db import models
 from django.contrib.gis.db import models
+from datetime import datetime
 
 class Location(models.Model):  # Een erf OID 
     boundary = models.PolygonField(default="POLYGON(( 10 10, 10 20, 20 20, 20 15, 10 10))")
@@ -15,12 +16,6 @@ class MissionType(models.Model):
     def __str__(self):
         return self.title
 
-class DoneMission(models.Model):
-    location = models.ForeignKey(Location, on_delete=models.CASCADE)
-    mission_type = models.ForeignKey(MissionType, on_delete=models.CASCADE)
-    gps_coordinates = models.PointField()
-    completion_date = models.DateTimeField()
-    image = models.ImageField()
 
 class MissionInstance(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -34,6 +29,14 @@ class MissionInstance(models.Model):
 
     def __str__(self):
         return f"{self.mission_type.title} (Expires: {self.expires_at})"
+
+class DoneMission(models.Model):
+    mission_instance = models.ForeignKey(MissionInstance, on_delete=models.CASCADE)
+    gps_coordinates = models.PointField(blank=True, null=True, spatial_index=False)
+    completion_date = models.DateTimeField(default=datetime.now)
+    image = models.ImageField()
+
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
