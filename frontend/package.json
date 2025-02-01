@@ -20,6 +20,7 @@
 	},
 	"dependencies": {
 		"flowbite-svelte": "^0.47.4",
+		"flowbite-svelte-icons": "^2.0.2",
 		"mapbox-gl": "^3.9.4",
 		"turf": "^3.0.14"
 	}
