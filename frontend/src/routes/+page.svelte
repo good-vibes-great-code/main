@@ -113,6 +113,15 @@
             console.log(`Failed to fetch missions`);
         }
         try {
+            const response = await (await fetch(`http://localhost:8000/api/sightings/`)).json();
+            Object.values(response).forEach(sighting => {
+                sightings.push(sighting);
+            });
+        }
+        catch {
+            console.log(`Failed to fetch missions`);
+        }
+        try {
             const response = await (await fetch(`http://localhost:8000/api/shop/`)).json();
             Object.values(response).forEach(shopItem => {
                 shopItems.push(shopItem);
