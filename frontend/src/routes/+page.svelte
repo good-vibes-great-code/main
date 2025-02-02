@@ -1,6 +1,6 @@
 <script>
     import { onMount } from "svelte";
-    import { InfoCircleSolid, ArrowRightOutline, UserCircleSolid, AdjustmentsVerticalOutline, DownloadSolid, BuildingSolid, BugSolid, CartSolid, DatabaseSolid, InstagramSolid, TwitterSolid} from 'flowbite-svelte-icons'
+    import { InfoCircleSolid, ArrowRightOutline, UserCircleSolid, AdjustmentsVerticalOutline, DownloadSolid, BuildingSolid, BugSolid, CartSolid, DatabaseSolid, InstagramSolid, TwitterSolid, UsersGroupSolid} from 'flowbite-svelte-icons'
     
     import { Tooltip } from 'flowbite-svelte';
 
@@ -40,7 +40,8 @@
     { title: "Big Money, Big Spend", description: "Purchase 10 store items", icon: CartSolid, progress: 3, total: 10 },
     { title: "Bird Watcher", description: "Make 10 sightings", icon: DatabaseSolid, progress: 2, total: 10 },
     { title: "Influencer", description: "Share 10 sightings", icon: InstagramSolid, progress: 9, total: 10 },
-    { title: "Birdie", description: "Have 10 different bird species in your garden", icon: TwitterSolid, progress: 1, total: 10 }
+    { title: "Birdie", description: "Have 10 different bird species in your garden", icon: TwitterSolid, progress: 1, total: 10 },
+    { title: "Collaboration", description: "Invite three neighbours to the program", icon: UsersGroupSolid, progress: 7, total: 10 }
   ];
 
     const dateFormatter = new Intl.DateTimeFormat('en-US', {
