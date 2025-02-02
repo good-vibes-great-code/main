@@ -10,7 +10,6 @@
     let map;
     let mapContainer;
     let locationCenter = turf.point([4.741815873559253, 51.78959525586813]);
-    let testPoint = turf.point([0.0, 0.0]);
     let zipcode = "3329 KP";
 
     // marker collections
@@ -67,6 +66,27 @@
                     const popup = new mapboxgl.Popup({ offset: 25 })
                         .setLngLat(marker.getLngLat())
                         .setHTML(sighting.species_name)
+                        .addTo(map);
+
+                    // Close popup when the mouse leaves the marker
+                    marker.getElement().addEventListener("mouseleave", () => {
+                        popup.remove();
+                    });
+                });
+            });
+            doneMissions.forEach(async improvement => {
+                const response = await (await fetch(`http://localhost:8000/api/complete_mission/${improvement.id}`)).json();
+                console.log(improvement);
+                const lon = response.gps_coordinates.split(" ")[1].replace("(","")
+                const lat = response.gps_coordinates.split(" ")[2].replace(")","")
+                const location = turf.point([lon,lat]);
+                const marker = new mapboxgl.Marker({ "color": "#19b402" })
+                    .setLngLat(location.geometry.coordinates)
+                    .addTo(map);
+                marker.getElement().addEventListener("mouseenter", () => {
+                    const popup = new mapboxgl.Popup({ offset: 25 })
+                        .setLngLat(marker.getLngLat())
+                        .setHTML(missionTypes.find(mType => mType.id === improvement.mission_type)?.title || 'Unknown Mission')
                         .addTo(map);
 
                     // Close popup when the mouse leaves the marker
