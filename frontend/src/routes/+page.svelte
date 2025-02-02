@@ -239,6 +239,19 @@
         <span class="text-2xl font-bold">Points:</span>
         <span class="ml-2 text-3xl font-extrabold text-yellow-400 animate-pulse">{points}</span>
     </div> -->
+    <div class="z-10 bg-white rounded-md justify-self-center px-4 mt-3 shadow-lg opacity-90">
+        <svg width="200" height="100" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+            <defs>
+                <linearGradient id="greenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#4CAF50"/>
+                    <stop offset="100%" stop-color="#2E7D32"/>
+                </linearGradient>
+            </defs>
+            <text x="10" y="60" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="url(#greenGradient)">ReWild</text>
+            <circle cx="170" cy="30" r="10" fill="#4CAF50"/>
+            <path d="M 170 30 Q 160 10, 150 30 T 130 30" stroke="#2E7D32" stroke-width="3" fill="none"/>
+        </svg>
+    </div>
     
     {#await dataPromise}
         <p>Waiting on Data</p>
