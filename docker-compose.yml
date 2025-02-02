@@ -3,11 +3,14 @@ services:
     build: frontend/
     volumes:
       - ./frontend:/app/
-    network_mode: host
+    ports:
+      - "3000:3000"
     tty: true
-    command: bash
+    command: npm run dev -- --host
   backend:
     build: rewild/
     volumes:
       - ./rewild:/app/    
-    network_mode: host
+    ports:
+      - "8000:8000"
+    command: python manage.py runserver 0.0.0.0:8000
