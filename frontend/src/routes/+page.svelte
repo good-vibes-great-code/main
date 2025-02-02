@@ -320,6 +320,25 @@
         </TabItem>
         <TabItem title="Wildlife Sighting Statistics">
             <h2>Wildlife Sighting Statistics</h2>
+            <Accordion>
+                {#each sightings as sighting}
+                    <AccordionItem>
+                        <span slot="header" class="w-full">
+                            <div class="grid grid-cols-2 w-full">
+                                <div class="text-left">
+                                    {sighting.species_name}
+                                </div>
+                                <div class="text-right justify-self-end mr-10">
+                                    1 sighting
+                                </div>
+                            </div>
+                        </span>
+                        <p class="text-gray-500 dark:text-gray-400">
+                            {dateFormatter.format(new Date(sighting.reported_at))}
+                        </p>
+                    </AccordionItem>
+                {/each}
+            </Accordion>
         </TabItem>
         <TabItem title="Achievements">
             <h2>Achievements</h2>
