@@ -32,7 +32,7 @@ class MissionInstanceViewSet(viewsets.ModelViewSet):
     def active_missions(self, request):
         user = request.user
         active_missions = MissionInstance.objects.filter(
-            user=user,
+            user=1, # TODO
             expires_at__gte=datetime.now(),
             completed_at__isnull=True,
         )
@@ -43,7 +43,7 @@ class MissionInstanceViewSet(viewsets.ModelViewSet):
     def completed_missions(self, request):
         user = request.user
         completed_mission = MissionInstance.objects.filter(
-            user=user,
+            user=1, # TODO
             completed_at__isnull=False,
         )
         serializer = self.get_serializer(completed_mission, many=True)
