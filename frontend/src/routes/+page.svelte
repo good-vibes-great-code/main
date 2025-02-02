@@ -60,6 +60,7 @@
         // Fetch mission types
         try {
             missionTypes = await (await fetch(`http://localhost:8000/api/mission_types/`)).json();
+            console.log(missionTypes);
         }
         catch {
             console.log(`Failed to fetch mission types`);
@@ -70,6 +71,7 @@
             Object.values(response).forEach(mission => {
                 missions.push(mission);
             });
+            console.log(missions);
         }
         catch {
             console.log(`Failed to fetch missions`);
@@ -93,9 +95,11 @@
         <Accordion>
             {#each missions as mission}
                 <AccordionItem>
-                    <span slot="header">{missionTypes[mission['mission_type']]['title']}</span>
+                    <span slot="header">
+                        {missionTypes.find(mType => mType.id === mission.mission_type)?.title || 'Unknown Mission'}
+                    </span>
                     <p class="text-gray-500 dark:text-gray-400">
-                        {missionTypes[mission['mission_type']]['description']}
+                        {missionTypes.find(mType => mType.id === mission.mission_type)?.description || 'No description available'}
                     </p>
                 </AccordionItem>
             {/each}
