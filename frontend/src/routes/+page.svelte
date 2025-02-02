@@ -17,13 +17,14 @@
     let dataPromise;
     let points = 1200;
     let interventions = [locationCenter] // markers for interventions
-    let sightingMarkers = [];
+    let sightings = [];
     let activeMissions = [];
     let doneMissions = [];
     let shopItems = [];
     let missionTypes = {};
     let landBoundery; // geo json
     let hide_user_drawer = true;
+    let hoveredMarker = null;
     let transitionParams = {
         x: 320,
         duration: 200,
@@ -50,18 +51,37 @@
             style: "mapbox://styles/mapbox/satellite-v9",
             center: locationCenter.geometry.coordinates,
             zoom: 17,
-        });        
-        
+        });
         map.on("load", async () => {
-            // Load the intervention map markers
-            interventions.forEach(intervention => {
+            // Load the sighting map markers
+            sightings.forEach(sighting => {
+                // console.log(sighting.spot_location);
+                const lon = sighting.spot_location.split(" ")[1].replace("(","")
+                const lat = sighting.spot_location.split(" ")[2].replace(")","")
+                const location = turf.point([lon,lat]);
+                console.log(location);
                 const marker = new mapboxgl.Marker()
-                    .setLngLat(intervention.geometry.coordinates)
+                    .setLngLat(location.geometry.coordinates)
                     .addTo(map);
-                marker.getElement().addEventListener("click", () => {
-                    alert("marker clicked");
-                })
-            })
+                marker.getElement().addEventListener("mouseenter", () => {
+                    const popup = new mapboxgl.Popup({ offset: 25 })
+                        .setLngLat(marker.getLngLat())
+                        .setHTML(sighting.species_name)
+                        .addTo(map);
+
+                    // Close popup when the mouse leaves the marker
+                    marker.getElement().addEventListener("mouseleave", () => {
+                        popup.remove();
+                    });
+                });
+            });
+            const popup = new mapboxgl.Popup({
+                closeButton: false,
+                closeOnClick:false
+            });
+            map.on('mouseenter', (e) => {
+                
+            });
         });
     });
 
