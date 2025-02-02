@@ -1,6 +1,9 @@
 <script>
     import { onMount } from "svelte";
-    import { InfoCircleSolid, ArrowRightOutline, UserCircleSolid, AdjustmentsVerticalOutline, DownloadSolid} from 'flowbite-svelte-icons'
+    import { InfoCircleSolid, ArrowRightOutline, UserCircleSolid, AdjustmentsVerticalOutline, DownloadSolid, BuildingSolid, BugSolid, CartSolid, DatabaseSolid, InstagramSolid, TwitterSolid} from 'flowbite-svelte-icons'
+    
+    import { Tooltip } from 'flowbite-svelte';
+
     import { sineIn } from 'svelte/easing';
     import { browser } from "$app/environment";
     import mapboxgl from "mapbox-gl";
@@ -31,6 +34,14 @@
         duration: 200,
         easing: sineIn
     };
+    let achievements = [
+    { title: "Bob the Builder", description: "Build 10 homes", icon: BuildingSolid, progress: 6, total: 10 },
+    { title: "Collector", description: "Invite 10 insects", icon: BugSolid, progress: 3, total: 10 },
+    { title: "Big Money, Big Spend", description: "Purchase 10 store items", icon: CartSolid, progress: 3, total: 10 },
+    { title: "Bird Watcher", description: "Make 10 sightings", icon: DatabaseSolid, progress: 2, total: 10 },
+    { title: "Influencer", description: "Share 10 sightings", icon: InstagramSolid, progress: 9, total: 10 },
+    { title: "Birdie", description: "Have 10 different bird species in your garden", icon: TwitterSolid, progress: 1, total: 10 }
+  ];
 
     const dateFormatter = new Intl.DateTimeFormat('en-US', {
         weekday: 'long', // "Saturday"
@@ -238,19 +249,28 @@
         <Accordion>
             {#each activeMissions as mission}
                 <AccordionItem>
-                    <span slot="header">
-                        {missionTypes.find(mType => mType.id === mission.mission_type)?.title || 'Unknown Mission'}
+                    <span slot="header" class="w-full">
+                        <div class="grid grid-cols-2 w-full">
+                            <div class="text-left">
+                                {missionTypes.find(mType => mType.id === mission.mission_type)?.title || 'Unknown Mission'}
+                            </div>
+                            <div class="text-gray-500 dark:text-gray-400 text-right justify-self-end mr-10">
+                                {mission.points} pts
+                            </div>
+                        </div>
+
                     </span>
-                    <p class="text-gray-500 dark:text-gray-400">
+                    <div class="text-gray-500 dark:text-gray-400">
                         {missionTypes.find(mType => mType.id === mission.mission_type)?.description || 'No description available'}
-                    </p>
+                    </div>
+                    
                 </AccordionItem>
             {/each}
         </Accordion>
     </div>
     {/await}
 </div>
-<img class='absolute top-8 right-8 z-10 size-20 opacity-65' src="./user.png" alt="poep" on:click={() => (hide_user_drawer = false)}/>
+<img class='absolute top-8 right-8 z-10 size-20 opacity-65' src="./user.png" alt="user" on:click={() => (hide_user_drawer = false)}/>
 <Drawer placement="right" transitionType="fly" {transitionParams} bind:hidden={hide_user_drawer} id="sidebar1" width="w-full">
     <Tabs class="*:w-full grid grid-cols-4">
         <TabItem open title="Profile">
@@ -258,12 +278,12 @@
             <Accordion>
                 {#each doneMissions as mission}
                     <AccordionItem>
-                        <span slot="header">
+                        <span slot="header" class="w-full">
                             <div class="grid grid-cols-2">
                                 <div class="text-left">
                                     {missionTypes.find(mType => mType.id === mission.mission_type)?.title || 'Unknown Mission'}
                                 </div>
-                                <div class="text-right">
+                                <div class="text-right justify-self-end mr-10">
                                     Completed on: {mission.completed_at ? dateFormatter.format(new Date(mission.completed_at)) : 'Unknown date'}
                                 </div>
                             </div>
@@ -276,17 +296,17 @@
             </Accordion>
         </TabItem>
         <TabItem title="Points shop">
-            <h2>Settings</h2>
+            <h2>Current points: 600</h2>
             <Accordion>
                 {#each shopItems as shopItem}
                     <AccordionItem>
-                        <span slot="header">
+                        <span slot="header" class="w-full">
                             <div class="grid grid-cols-2 w-full">
                                 <div class="text-left">
                                     {shopItem.name}
                                 </div>
-                                <div class="text-right">
-                                    {shopItem.price} points
+                                <div class="text-right justify-self-end mr-10">
+                                    {shopItem.price} pts
                                 </div>
                             </div>
                         </span>
@@ -302,6 +322,29 @@
         </TabItem>
         <TabItem title="Achievements">
             <h2>Achievements</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+                {#each achievements as achievement}
+                  <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md flex flex-col items-center">
+                    <!-- <Tooltip content={achievement.description} placement="top"> -->
+                        <div class="flex items-center space-x-2 cursor-pointer">
+                            <achievement.icon class="w-8 h-8 text-blue-500 dark:text-blue-400" />
+                            <h3 class="text-lg font-semibold text-gray-900 dark:text-white">{achievement.title}</h3>
+                        </div>
+                    <Tooltip>
+                        {achievement.description}
+                    </Tooltip>
+                    
+                    <!-- </Tooltip> -->
+              
+                    <!-- Custom Tailwind Progress Bar -->
+                    <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 mt-3">
+                      <div class="bg-blue-500 h-3 rounded-full transition-all duration-300" style="width: {(achievement.progress / achievement.total) * 100}%"></div>
+                    </div>
+              
+                    <p class="text-sm text-gray-500 mt-2">{achievement.progress} / {achievement.total} Completed</p>
+                  </div>
+                {/each}
+              </div>
         </TabItem>
     </Tabs>
     <CloseButton on:click={() => (hide_user_drawer = true)} class="top-4 right-8 absolute w-50 mb-4 dark:text-white" />
