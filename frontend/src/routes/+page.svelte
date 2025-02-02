@@ -9,7 +9,9 @@
     import { Accordion, AccordionItem, Drawer, Button, CloseButton , ButtonGroup, Tabs, TabItem} from "flowbite-svelte";
     let map;
     let mapContainer;
-    let locationCenter = turf.point([4.741815873559253, 51.78959525586813]);
+    let locationCenter = turf.point([4., 51.]);
+    let locationPolygon;
+    let tempLocationPolygon;
     let zipcode = "3329 KP";
 
     // marker collections
@@ -47,9 +49,9 @@
         // Render Map
         map = new mapboxgl.Map({
             container: mapContainer,
-            style: "mapbox://styles/mapbox/satellite-v9",
+            style: "mapbox://styles/mapbox/satellite-streets-v12",
             center: locationCenter.geometry.coordinates,
-            zoom: 17,
+            zoom: 9,
         });
         map.on("load", async () => {
             // Load the sighting map markers
@@ -99,9 +101,38 @@
                 closeButton: false,
                 closeOnClick:false
             });
-            map.on('mouseenter', (e) => {
                 
+            console.log(locationPolygon)
+            map.addSource('erf', {
+                'type': 'geojson',
+                'data': {
+                'type': 'Feature',
+                'geometry': {
+                    'type': 'Polygon',
+                    // These coordinates outline Maine.
+                    'coordinates': [locationPolygon],
+                }
+            }
             });
+            // Add a new layer to visualize the polygon.
+            map.addLayer({
+                'id': 'erf_layer',
+                'type': 'fill',
+                'source': 'erf', // reference the data source
+                'layout': {},
+                'paint': {
+                    'fill-color': '#0080ff', // blue color fill
+                    'fill-opacity': 0.5
+                }
+            });
+            // console.log(turf.polygon([locationPolygon]))
+            const bounds = new mapboxgl.LngLatBounds();
+            locationPolygon.forEach(coord => {
+                bounds.extend(coord);
+            })
+            map.fitBounds(bounds, {
+                padding: {top: 50, right: 50, left: 50, bottom: 50}
+            })
         });
     });
 
@@ -151,6 +182,43 @@
         catch {
             console.log(`Failed to fetch shpo`);
         }
+        try {
+            const response = await (await fetch(`http://localhost:8000/api/locations/`)).json();
+        
+            locationPolygon = parseSRIDPolygon(response[0].boundary);
+            tempLocationPolygon = turf.polygon([locationPolygon])
+            locationPolygon = [];
+            Object.values(tempLocationPolygon.geometry.coordinates[0]).forEach(coordinates => {
+                console.log(coordinates);
+                locationPolygon.push([coordinates.lng, coordinates.lat])
+            });
+            
+        }
+        catch (e){
+            console.log(`Failed to fetch location`);
+            console.log("Error", e.stack);
+    console.log("Error", e.name);
+    console.log("Error", e.message);
+        }
+    }
+
+    function parseSRIDPolygon(polygonString) {
+        // Extract the coordinate part using regex
+        const match = polygonString.match(/POLYGON \(\((.*)\)\)/);
+        if (!match) throw new Error("Invalid POLYGON format");
+        
+        // Split coordinates and map to an array of unique objects
+        const coords = match[1]
+            .split(", ")
+            .map(coord => {
+                const [lng, lat] = coord.split(" ").map(Number);
+                return { lng, lat };
+            });
+        
+        // Remove duplicates by using a Set with a JSON string key
+        const uniqueCoords = Array.from(new Set(coords.map(JSON.stringify))).map(JSON.parse);
+        
+        return uniqueCoords;
     }
 </script>
 <div id="map" bind:this={mapContainer}></div>
